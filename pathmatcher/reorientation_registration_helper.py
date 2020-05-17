@@ -62,7 +62,10 @@ import shutil
 import traceback
 
 if PY3:
-    import pathmatcher
+    try:
+        import pathmatcher
+    except Exception as exc:
+        from . import pathmatcher
 else:
     from . import pathmatcher
 
@@ -99,6 +102,23 @@ except:
             return args[0]
         return kwargs.get('iterable', None)
 
+
+# Get version
+# This approach is better than importing the module because can fail if the requirements aren't met
+# See https://packaging.python.org/guides/single-sourcing-package-version/
+import codecs
+curpath = os.path.abspath(os.path.dirname(__file__))
+def read(*parts):
+    with codecs.open(os.path.join(*parts), 'r') as fp:
+        return fp.read()
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__\s*=\s*['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+__version__ = find_version(curpath, "_version.py")
 
 
 #***********************************

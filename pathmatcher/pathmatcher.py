@@ -48,8 +48,6 @@ from builtins import range
 from past.builtins import basestring
 from builtins import object
 
-from _version import __version__
-
 import sys
 PY3 = (sys.version_info >= (3,0,0))
 
@@ -65,7 +63,7 @@ import urllib.request, urllib.parse, urllib.error
 
 if PY3:
     from pathlib import PurePath, PureWindowsPath, PurePosixPath # opposite operation of os.path.join (split a path
-    from tee import Tee
+    from .tee import Tee
 else:
     from .pathlib2 import PurePath, PureWindowsPath, PurePosixPath # opposite operation of os.path.join (split a path
     from .tee import Tee
@@ -98,6 +96,22 @@ try:
 except ImportError as exc:
     import json
 
+# Get version
+# This approach is better than importing the module because can fail if the requirements aren't met
+# See https://packaging.python.org/guides/single-sourcing-package-version/
+import codecs
+curpath = os.path.abspath(os.path.dirname(__file__))
+def read(*parts):
+    with codecs.open(os.path.join(*parts), 'r') as fp:
+        return fp.read()
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__\s*=\s*['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+__version__ = find_version(curpath, "_version.py")
 
 
 #***********************************
@@ -357,13 +371,13 @@ def main(argv=None, return_report=False, regroup=False):
         argv = shlex.split(argv) # Parse string just like argv using shlex
 
     # If --gui was specified, then there's a problem
-    if len(argv) == 0 or '--gui' in argv:  # pragma: no cover
+    if '--gui' in argv:  # pragma: no cover
         raise Exception('--gui specified but an error happened with lib/gooey, cannot load the GUI (however you can still use this script in commandline). Check that lib/gooey exists and that you have wxpython installed. Here is the error: ')
 
     #==== COMMANDLINE PARSER ====
 
     #== Commandline description
-    desc = '''Regex Path Matcher v%s
+    desc = '''Regex PathMatcher v%s
 Description: Match paths using regular expression, and then generate a report. Can also substitute using regex to generate output paths. A copy mode is also provided to allow the copy of files from input to output paths.
 This app is essentially a path matcher using regexp, and it then rewrites the path using regexp, so that you can reuse elements from input path to build the output path.
 This is very useful to reorganize folders for experiments, where scripts/softwares expect a specific directories layout in order to work.
@@ -389,7 +403,7 @@ In addition to the switches provided below, using this program as a Python modul
     #== Commandline arguments
     #-- Constructing the parser
     # Use GooeyParser if we want the GUI because it will provide better widgets
-    if (len(argv) == 0 or '--gui' in argv) and not '--ignore-gooey' in argv:  # pragma: no cover
+    if ('--gui' in argv) and not '--ignore-gooey' in argv:  # pragma: no cover
         # Initialize the Gooey parser
         main_parser = gooey.GooeyParser(add_help=True, description=desc, epilog=ep, formatter_class=argparse.RawTextHelpFormatter)
         # Define Gooey widget types explicitly (because type auto-detection doesn't work quite well)
