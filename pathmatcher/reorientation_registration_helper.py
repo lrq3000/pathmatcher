@@ -49,7 +49,6 @@ from builtins import str
 from builtins import range
 from past.builtins import basestring
 from builtins import object
-__version__ = '1.7.1'
 
 import sys
 PY3 = (sys.version_info >= (3,0,0))
