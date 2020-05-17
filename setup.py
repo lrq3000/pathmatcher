@@ -70,6 +70,11 @@ setup(name = "pathmatcher",
             'reorientation_registration_helper=pathmatcher.reorientation_registration_helper:main',
             ],
     },
-    install_requires=[],  # all libraries required for compatibility with Python 2.7 such as pathlib2 are provided with the module
+    install_requires=[
+    "chardet>=3.0.4",
+    "tqdm>=4.46.0",
+    "scandir>=1.10.0",
+    "numpy>=1.18.1",
+    ],  # all libraries required for compatibility with Python 2.7 such as pathlib2 are provided with the module
 )
 

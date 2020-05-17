@@ -216,36 +216,6 @@ A concrete example of scripting of `pathmatcher.py` can be found inside the `reo
 
 A similar project, and potentially more powerful, is [fselect](https://github.com/jhspetersson/fselect), which allows to use SQL-like queries on files. In MATLAB, similar functions are available in [dirPlus](https://github.com/kpeaton/dirPlus).
 
-## ASCII Rename
-
-### Description
-
-A simple Python script that will recursively rename all unicode files and folders in a path into ascii.
-
-Several neuroscience tools like SPM cannot detect files with unicode characters (or accents or any non-ascii character).
-
-This script avoids the need to manually rename every files (try to do that consistently with fMRI volumes...) by replacing any unicode character by its closest ascii counterpart.
-
-Example: maéva -> maeva
-
-### Usage
-
-```
-usage: asciirename.py [-h] -i /some/path [-v]
-
-Ascii Path Renamer v0.3
-Description: Rename all directories/files names from unicode (ie, accentuated characters) to ascii.
-
-Note: use --gui (without any other argument) to launch the experimental gui (needs Gooey library).
-
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i /some/path, --input /some/path
-                        Path to the input folder. The renaming will be done recursively.
-  -v, --verbose         Verbose mode (show more output).
-```
-
 ## Auxiliary tool: Reorientation and registration helper
 
 ### Description
@@ -261,7 +231,10 @@ This script follows the following steps:
 1. Automatic reorientation of structural MRI using [spm_auto_reorient.m](https://github.com/lrq3000/spm_auto_reorient) (please install this script along with SPM12 beforehand).
 2. Check reorient and adjust manually.
 3. Side-by-side check of multiple subjects' structural MRI.
-4. Manual co-registration of functional images with structural.
+4. Detection of functional images (just walk through all folders to build a list of functional images and pair them to their respective structural images given the input regexp).
+5. Automatic co-registration of functional images onto structural.
+6. Manual co-registration of functional images with structural.
+7. Extraction of framewise displacement motion metrics from functional images.
 
 This script will not only guide you through these steps, in the correct order, but it will also automatically load the files for you (no chance of doing a mistake or missing a subject), while showing you a progress bar (showing how many subjects are remaining and with a time estimate to finish).
 
@@ -298,9 +271,10 @@ optional arguments:
 
 * argparse
 * pathmatcher
-* [mlab](https://github.com/ewiger/mlab)
+* mlab ([Python2](https://github.com/ewiger/mlab) version, [Python3](https://github.com/deeuu/matlab_wrapper/tree/python3) version as provided with this module)
 
 #### Optional
 
 * scandir, to scan files faster
 * tqdm, to show the progress bar
+* numpy >= 1.18.1, for the optional last step to generate motion metrics from functional images
