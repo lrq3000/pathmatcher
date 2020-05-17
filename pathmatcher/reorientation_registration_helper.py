@@ -393,34 +393,38 @@ Note3: you need the pathmatcher.py library (see lrq3000 github).
                     }
 
     # == IMPORT MLAB (LOAD MATLAB BRIDGE)
-    print("Launching MATLAB, please wait a few seconds...")
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))  # Change Python current directory before launching MATLAB, this will change the initial dir of MATLAB, this will allow to find the auxiliay functions
-    #matlab.cd(rootfolderpath)  # FIXME: Does not work: Change MATLAB's current dir to root of project's folder, will be easier for user to load other images if needed
-    try:
-        #from matlab_wrapper import matlab_wrapper
-        from mlabwrap import mlabwrap  # pure python implementation without using ctypes nor external dlls such as libssl, ported to Python 3
-        # start a Matlab session
-        mlab = mlabwrap.init()
-        # same for matlab_wrapper
-        #mlab = matlab_wrapper.MatlabSession()
-        # add current folder to the path to have access to helper .m scripts, this needs to be done before each command call
-        mlab.addpath(filestr_to_raw(os.path.dirname(os.path.abspath(__file__))))
-        # using matlab_wrapper
-        #mlab.workspace.addpath(filestr_to_raw(os.path.dirname(os.path.abspath(__file__))))
-        # python-matlab-bridge
-        #mlab.set_variable('curfolder', filestr_to_raw(os.path.dirname(os.path.abspath(__file__))))
-        #mlab.run_code('addpath(curfolder);')
-        # mlab
-        #mlab.addpath(filestr_to_raw(os.path.dirname(os.path.abspath(__file__))))  # add current folder to the path to have access to helper .m scripts, this needs to be done before each command call, alternative for other libraries
-        # Nota bene: to add the auxiliary local matlab scripts to be accessible in mlab, we need to do two things: 1. os.chdir() in the local directory with Python before launching mlab, 2. addpath in matlab afterwards (with filepath converted to raw path format). Anything else would raise a bug at some point!
-    except ImportError as exc:
-        print("You need to install a matlab wrapper and to add SPM12 in your MATLAB path to use this script. For Python 2.7, use https://github.com/mrkrd/matlab_wrapper, or it should work with some limited changes on any mlabwrap based library such as: https://github.com/arokem/python-matlab-bridge (the most reliable python-matlab wrapper interface in our experience, but has limited support for graphical interface, but great for debugging since it never fails), https://github.com/ewiger/mlab or https://github.com/cpbotha/mlabwrap-purepy or . For Python 3.x, use https://github.com/deeuu/matlab_wrapper/tree/python3 , https://github.com/arokem/python-matlab-bridge or https://github.com/decacent/mlab")
-        raise(exc)
+    if not motiononly:
+        print("Launching MATLAB, please wait a few seconds...")
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))  # Change Python current directory before launching MATLAB, this will change the initial dir of MATLAB, this will allow to find the auxiliay functions
+        #matlab.cd(rootfolderpath)  # FIXME: Does not work: Change MATLAB's current dir to root of project's folder, will be easier for user to load other images if needed
+        try:
+            #from matlab_wrapper import matlab_wrapper
+            try:
+                from mlabwrap import mlabwrap  # pure python implementation without using ctypes nor external dlls such as libssl, ported to Python 3
+            except Exception as exc:
+                from .mlabwrap import mlabwrap  # try a relative import if mlabwrap is not installed
+            # start a Matlab session
+            mlab = mlabwrap.init()
+            # same for matlab_wrapper
+            #mlab = matlab_wrapper.MatlabSession()
+            # add current folder to the path to have access to helper .m scripts, this needs to be done before each command call
+            mlab.addpath(filestr_to_raw(os.path.dirname(os.path.abspath(__file__))))
+            # using matlab_wrapper
+            #mlab.workspace.addpath(filestr_to_raw(os.path.dirname(os.path.abspath(__file__))))
+            # python-matlab-bridge
+            #mlab.set_variable('curfolder', filestr_to_raw(os.path.dirname(os.path.abspath(__file__))))
+            #mlab.run_code('addpath(curfolder);')
+            # mlab
+            #mlab.addpath(filestr_to_raw(os.path.dirname(os.path.abspath(__file__))))  # add current folder to the path to have access to helper .m scripts, this needs to be done before each command call, alternative for other libraries
+            # Nota bene: to add the auxiliary local matlab scripts to be accessible in mlab, we need to do two things: 1. os.chdir() in the local directory with Python before launching mlab, 2. addpath in matlab afterwards (with filepath converted to raw path format). Anything else would raise a bug at some point!
+        except ImportError as exc:
+            print("You need to install a matlab wrapper and to add SPM12 in your MATLAB path to use this script. For Python 2.7, use https://github.com/mrkrd/matlab_wrapper, or it should work with some limited changes on any mlabwrap based library such as: https://github.com/arokem/python-matlab-bridge (the most reliable python-matlab wrapper interface in our experience, but has limited support for graphical interface, but great for debugging since it never fails), https://github.com/ewiger/mlab or https://github.com/cpbotha/mlabwrap-purepy or . For Python 3.x, use https://github.com/deeuu/matlab_wrapper/tree/python3 , https://github.com/arokem/python-matlab-bridge or https://github.com/decacent/mlab")
+            raise(exc)
 
     if not motiononly:
         # == Anatomical files walking
         print("Please wait while the directories are scanned to find anatomical images...")
-        anat_list, conflict_flags = pathmatcher.main(r' -i "{inputpath}" -ri "{regex_anat}" --silent '.format(**template_vars), True)
+        anat_list, conflict_flags = pathmatcher.pathmatcher(r' -i "{inputpath}" -ri "{regex_anat}" --silent '.format(**template_vars), True)
         anat_list = [file[0] for file in anat_list]  # extract only the input match, there's no output anyway
         anat_list = [os.path.join(rootfolderpath, file) for file in anat_list]  # calculate full absolute path instead of relative (since we need to pass them to MATLAB)
         print("Found %i anatomical images." % len(anat_list))
@@ -494,7 +498,7 @@ Note3: you need the pathmatcher.py library (see lrq3000 github).
             # for condition in conditions_list[1:]:  # skip first condition, this is where we will copy the anatomical images from, to the other conditions
                 # template_vars["tocond"] = condition
                 # os.chdir(rootfolderpath)  # reset to rootfolder to generate the simulation report there
-                # pathmatcher.main(r' -i "{inputpath}/{firstcond}" -ri "([^\/]+)/data/mprage/" -o "{inputpath}/{tocond}" -ro "\1/data/mprage/" --copy --force --yes --silent '.format(**template_vars), True)
+                # pathmatcher.pathmatcher(r' -i "{inputpath}/{firstcond}" -ri "([^\/]+)/data/mprage/" -o "{inputpath}/{tocond}" -ro "\1/data/mprage/" --copy --force --yes --silent '.format(**template_vars), True)
 
         # == DETECT FUNCTIONAL IMAGES
         print("\n=> STEP4: DETECTION OF FUNCTIONAL IMAGES")
@@ -503,7 +507,7 @@ Note3: you need the pathmatcher.py library (see lrq3000 github).
         input()
         # -- Walk files and detect functional images (we already got structural)
         os.chdir(rootfolderpath)  # reset to rootfolder to generate the simulation report there
-        func_list, conflict_flags = pathmatcher.main(r' -i "{inputpath}" -ri "{regex_func}" --silent '.format(**template_vars), True)
+        func_list, conflict_flags = pathmatcher.pathmatcher(r' -i "{inputpath}" -ri "{regex_func}" --silent '.format(**template_vars), True)
         func_list = [file[0] for file in func_list]  # extract only the input match, there's no output anyway
         print("Found %i functional images." % len(func_list))
 
@@ -787,7 +791,7 @@ Note3: you need the pathmatcher.py library (see lrq3000 github).
 
         if regex_motion:
             # Get list of rp files
-            rp_list, conflict_flags = pathmatcher.main(r' -i "{inputpath}" -ri "{regex_motion}"  --silent '.format(**template_vars), True)
+            rp_list, conflict_flags = pathmatcher.pathmatcher(r' -i "{inputpath}" -ri "{regex_motion}"  --silent '.format(**template_vars), True)
             rp_list = [file[0] for file in rp_list]  # extract only the input match, there's no output anyway
             rp_list = [os.path.join(rootfolderpath, file) for file in rp_list]  # calculate full absolute path instead of relative (since we need to pass them to MATLAB)
             # Get the key and reorganize by key so that we can know if there are multiple sessions per subject

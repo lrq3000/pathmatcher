@@ -224,7 +224,7 @@ A companion to help you reorient and coregister manually your structural and fun
 
 This helper script will scan all images in the specified input path, and will accompagny you step-by-step to do the reorientation and coregistration correctly.
 
-This script requires SPM12 (and MATLAB).
+This script requires SPM12 (and MATLAB), and runs only on Windows (because of the matlab wrapper limitations).
 
 This script follows the following steps:
 
@@ -271,7 +271,10 @@ optional arguments:
 
 * argparse
 * pathmatcher
-* mlab ([Python2](https://github.com/ewiger/mlab) version, [Python3](https://github.com/deeuu/matlab_wrapper/tree/python3) version as provided with this module)
+* mlabwrap aka matlap_wrapper ([Python2](https://github.com/mrkrd/matlab_wrapper) version, [Python3](https://github.com/deeuu/matlab_wrapper/tree/python3) version as provided with this module)
+* pypiwin32 (for mlabwrap)
+* pip install --ignore-installed pywin32
+    * then execute `python Scripts\pywin32_postinstall.py -install` in an admin command prompt, see [this explanation](https://stackoverflow.com/questions/58612306/how-to-fix-importerror-dll-load-failed-while-importing-win32api#comment103561767_58613735).
 
 #### Optional
 

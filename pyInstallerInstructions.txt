@@ -13,7 +13,7 @@ From this step on, you can reuse the same environment each time you want to rebu
 8. conda activate pathmatcherenv
 9. if there is any dist or build or __pycache folder, delete them
 10. pyinstaller -F -c --hiddenimport="pkg_resources.py2_warn" --hiddenimport="chardet" --add-data="pathmatcher/_version.py;pathmatcher" pathmatcher-cli.py
-11. pyinstaller -F -c --hiddenimport="pkg_resources.py2_warn" --hiddenimport="chardet" --add-data="pathmatcher/_version.py;pathmatcher" reorientation_registration_helper-cli.py
+11. pyinstaller -F -c --hiddenimport="pkg_resources.py2_warn" --hiddenimport="chardet" --hiddenimport="pywin32" --add-data="pathmatcher/_version.py;pathmatcher" reorientation_registration_helper-cli.py
 12. Zip it and distribute
 
 To build a 32-bit binary, simply install Miniconda3 32-bit.

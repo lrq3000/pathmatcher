@@ -74,7 +74,7 @@ setup(name = "pathmatcher",
     "chardet>=3.0.4",
     "tqdm>=4.46.0",
     "scandir>=1.10.0",
-    "numpy>=1.18.1",
+    #"numpy>=1.18.1",
     ],  # all libraries required for compatibility with Python 2.7 such as pathlib2 are provided with the module
 )
 

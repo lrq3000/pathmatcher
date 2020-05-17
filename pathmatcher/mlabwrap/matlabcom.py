@@ -20,7 +20,7 @@ import numpy as np
 try:
   import win32com.client
 except:
-  print('win32com in missing, please install it')
+  print('win32com in missing, please install it (via pip install --ignore-installed pywin32)')
   raise
 
 class MatlabError(Exception):

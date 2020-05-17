@@ -1,1 +1,2 @@
 * Use https://github.com/PySimpleGUI/PySimpleGUI instead of Gooey, for a more modular GUI interface (and realtime console progress bar and infos)
+* Migrate reorientation_registration_helper.py from mlabwrap to MATLAB's own Python wrapper module, it's not on pypi but it's distributed with newer versions of MATLAB and the big advantage is that it works on all platforms (not only Windows): https://www.mathworks.com/help/matlab/matlab-engine-for-python.html
