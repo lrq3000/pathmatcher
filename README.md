@@ -1,6 +1,8 @@
 # Pathmatcher: Regular Expression Path Matcher
 
-## Description
+[![PyPI-Status](https://img.shields.io/pypi/v/pathmatcher.svg)](https://pypi.org/project/pathmatcher)
+[![PyPI-Versions](https://img.shields.io/pypi/pyversions/pathmatcher.svg?logo=python&logoColor=white)](https://pypi.org/project/pathmatcher)
+[![PyPI-Downloads](https://img.shields.io/pypi/dm/pathmatcher.svg?logo=python&logoColor=white)](https://pypi.org/project/pathmatcher)
 
 Patchmatcher is a files and folders hierarchy management tool in python, with a regular expression matcher on _paths_ (instead of just filenames). Can display a simulation report and automatically detect conflicts (already existing files, collisions of multiple files copied to the same output filename because of regexp, etc.). Can also be used as a Python module that returns the list of matched files and the transformations.
 
@@ -8,9 +10,11 @@ If you often run experiments, you use scripts and applications, with some that y
 
 If you happen to know this situation, this tool might help you: just specify a regular expression matching the files you need, enter an output regular expression (that can reuse parts of the input files, for example your subjects ids, using regexp groups and recall), and then launch the program.
 
+This module works for any file management purpose, but it is particularly optimized via the reorientation_registration_helper.py submodule to work for neuroimaging, such as reorganizing very fast any dataset into a BIDS compliant format.
+
 This application can also be used as a Python module, so that you can include it in a pipeline to (semi-)automate repetitive stuff, like selecting the appropriate files to open in your favorite tool like SPM. For an exemple, see the script `reorient_pipeline` at the root of this repository.
 
-Runs on Python 2.7.15, but uses good standards to ensure easy conversion to Python 3 in case you really need it.
+Runs on Python 3 (Python 3.7 and 3.8 tested), and a previous version worked for Python 2.7.15 although compatibility isn't guaranteed anymore since Python 2 support is now deprecated.
 
 If you are not experienced with [regular expressions](http://regexone.com/), you can use online tools such as [Pythex](http://pythex.org/) to instantly test your regexp.
 
