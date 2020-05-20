@@ -21,50 +21,31 @@ If you are not experienced with [regular expressions](http://regexone.com/), you
 ## Usage
 
 ```
-usage: pathmatcher.py [-h] -i /some/path -ri "sub[^/]+/\d+" [-o /new/path]
-                      [-ro "newsub/\1"] [-c] [-s] [-m] [-d] [-t] [-y] [-f]
-                      [--show_fullpath] [-ra 1:10-255]
-                      [--report pathmatcher_report.txt]
-                      [-l /some/folder/filename.log] [-v] [--silent]
+usage: pathmatcher-cli.exe [-h] -i /some/path -ri "sub[^/]+/\d+" [-o /new/path] [-ro "newsub/\1"] [-c] [-s] [-m]
+                           [--move_fast] [-d] [-t] [--dir] [-y] [-f] [--show_fullpath] [-ra 1:10-255]
+                           [-re "newsub/\1"] [--report pathmatcher_report.txt] [--noreport] [--tree]
+                           [-l /some/folder/filename.log] [-v] [--silent]
 
-Regex Path Matcher v0.9.5
-Description: Match paths using regular expression, and then generate a report. C
-an also substitute using regex to generate output paths. A copy mode is also pro
-vided to allow the copy of files from input to output paths.
-This app is essentially a path matcher using regexp, and it then rewrites the pa
-th using regexp, so that you can reuse elements from input path to build the out
-put path.
-This is very useful to reorganize folders for experiments, where scripts/softwar
-es expect a specific directories layout in order to work.
+Regex PathMatcher v1.7.4
+Description: Match paths using regular expression, and then generate a report. Can also substitute using regex to generate output paths. A copy mode is also provided to allow the copy of files from input to output paths.
+This app is essentially a path matcher using regexp, and it then rewrites the path using regexp, so that you can reuse elements from input path to build the output path.
+This is very useful to reorganize folders for experiments, where scripts/softwares expect a specific directories layout in order to work.
 
 Advices
 -------
-- Filepath comparison: Paths are compared against filepaths, not just folders (b
-ut of course you can match folders with regex, but remember when designing your
-regexp that it will compared against files paths, not directories).
-- Relative filepath: Paths are relative to the rootpath (except if --show-fullpa
-th) and that they are always unix style, even on Windows (for consistency on all
- platforms and to easily reuse regexp).
-- Partial matching: partial matching regex is accepted, so you don't need to mod
-el the full filepath, only the part you need (eg, 'myfile' will match '/myfolder
-/sub/myfile-034.mat').
-- Unix filepaths: on all platforms, including Windows, paths will be in unix for
-mat (except if you set --show_fullpath). It makes things simpler for you to make
- crossplatform regex patterns.
-- Use [^/]+ to match any file/folder in the filepath: because paths are always u
-nix-like, you can use [^/]+ to match any part of the filepath. Eg, "([^/]+)/([^/
-]+)/data/mprage/.+\.(img|hdr|txt)" will match "UWS/John_Doe/data/mprage/12345_t1
-_mprage_98782.hdr".
-- Split your big task in several smaller, simpler subtasks: instead of trying to
- do a regex that match T1, T2, DTI, everything at the same time, try to focus on
- only one modality at a time and execute them using multiple regex queries: eg,
-move first structural images, then functional images, then dti, etc. instead of
-all at once.
-- Python module: this library can be used as a Python module to include in your
-scripts (just call `main(return_report=True)`).
+- Filepath comparison: Paths are compared against filepaths, not just folders (but of course you can match folders with regex, but remember when designing your regexp that it will compared against files paths, not directories).
+- Relative filepath: Paths are relative to the rootpath (except if --show-fullpath) and that they are always unix style, even on Windows (for consistency on all platforms and to easily reuse regexp).
+- Partial matching: partial matching regex is accepted, so you don't need to model the full filepath, only the part you need (eg, 'myfile' will match '/myfolder/sub/myfile-034.mat').
+- Unix filepaths: on all platforms, including Windows, paths will be in unix format (except if you set --show_fullpath). It makes things simpler for you to make crossplatform regex patterns.
+- Use [^/]+ to match any file/folder in the filepath: because paths are always unix-like, you can use [^/]+ to match any part of the filepath. Eg, "([^/]+)/([^/]+)/data/mprage/.+\.(img|hdr|txt)" will match "UWS/John_Doe/data/mprage/12345_t1_mprage_98782.hdr".
+- Split your big task in several smaller, simpler subtasks: instead of trying to do a regex that match T1, T2, DTI, everything at the same time, try to focus on only one modality at a time and execute them using multiple regex queries: eg, move first structural images, then functional images, then dti, etc. instead of all at once.
+- Python module: this library can be used as a Python module to include in your scripts (just call `main(return_report=True)`).
 
-Note: use --gui (without any other argument) to launch the experimental gui (nee
-ds Gooey library).
+Note: use --gui (without any other argument) to launch the experimental gui (needs Gooey library).
+
+In addition to the switches provided below, using this program as a Python module also provides 2 additional options:
+ - return_report = True to return as a variable the files matched and the report instead of saving in a file.
+ - regroup = True will return the matched files (if return_report=True) in a tree structure of nested list/dicts depending on if the groups are named or not. Groups can also avoid being matched by using non-matching groups in regex.
 
 
 optional arguments:
@@ -72,50 +53,34 @@ optional arguments:
   -i /some/path, --input /some/path
                         Path to the input folder
   -ri "sub[^/]+/(\d+)", --regex_input "sub[^/]+/(\d+)"
-                        Regex to match input paths. Must be defined relatively f
-rom --input folder. Do not forget to enclose it in double quotes (and not single
-)! To match any directory, use [^/\]* or the alias \dir.
+                        Regex to match input paths. Must be defined relatively from --input folder. Do not forget to enclose it in double quotes (and not single)! To match any directory, use [^/\]*? or the alias \dir, or \dirnodot if you want to match folders in combination with --dir switch.
   -o /new/path, --output /new/path
-                        Path to the output folder (where file will get copied ov
-er if --copy)
+                        Path to the output folder (where file will get copied over if --copy)
   -ro "newsub/\1", --regex_output "newsub/\1"
-                        Regex to substitute input paths to convert to output pat
-hs. Must be defined relatively from --output folder. If not provided but --outpu
-t is specified, will keep the same directory layout as input (useful to extract
-specific files without changing layout). Do not forget to enclose it in double q
-uotes!
-  -c, --copy            Copy the matched input paths to the regex-substituted ou
-tput paths.
-  -s, --symlink         Copy with a symbolic/soft link the matched input paths t
-o the regex-substituted output paths (works only on Linux).
-  -m, --move            Move the matched input paths to the regex-substituted ou
-tput paths.
+                        Regex to substitute input paths to convert to output paths. Must be defined relatively from --output folder. If not provided but --output is specified, will keep the same directory layout as input (useful to extract specific files without changing layout). Do not forget to enclose it in double quotes!
+  -c, --copy            Copy the matched input paths to the regex-substituted output paths.
+  -s, --symlink         Copy with a symbolic/soft link the matched input paths to the regex-substituted output paths (works only on Linux).
+  -m, --move            Move the matched input paths to the regex-substituted output paths.
+  --move_fast           Move the matched input paths to the regex-substituted output paths, without checking first that the copy was done correctly.
   -d, --delete          Delete the matched files.
-  -t, --test            Regex test mode: Stop after the first matched file and s
-how the result of substitution. Useful to quickly check if the regex patterns ar
-e ok.
-  -y, --yes             Automatically accept the simulation and apply changes (g
-ood for batch processing and command chaining).
-  -f, --force           Force overwriting the target path already exists. Note t
-hat by default, if a file already exist, without this option, it won't get overw
-ritten and no message will be displayed.
-  --show_fullpath       Show full paths instead of relative paths in the simulat
-ion.
+  -t, --test            Regex test mode: Stop after the first matched file and show the result of substitution. Useful to quickly check if the regex patterns are ok.
+  --dir                 Match directories too? (else only files are matched)
+  -y, --yes             Automatically accept the simulation and apply changes (good for batch processing and command chaining).
+  -f, --force           Force overwriting the target path already exists. Note that by default, if a file already exist, without this option, it won't get overwritten and no message will be displayed.
+  --show_fullpath       Show full paths instead of relative paths in the simulation.
   -ra 1:10-255, --range 1:10-255
-                        Range mode: match only the files with filenames containi
-ng numbers in the specified range. The format is: (regex-match-group-id):(range-
-start)-(range-end). regex-match-group-id is the id of the regular expression tha
-t will contain the numbers that must be compared to the range. range-end is incl
-usive.
+                        Range mode: match only the files with filenames containing numbers in the specified range. The format is: (regex-match-group-id):(range-start)-(range-end). regex-match-group-id is the id of the regular expression that will contain the numbers that must be compared to the range. range-end is inclusive.
+  -re "newsub/\1", --regex_exists "newsub/\1"
+                        Regex of output path to check if the matched regex here is matched prior writing output files.
   --report pathmatcher_report.txt
-                        Where to store the simulation report (default: pwd = cur
-rent working dir).
+                        Where to store the simulation report (default: pwd = current working dir).
+  --noreport            Do not create a report file, print the report in the console.
+  --tree                Regroup in a tree structure the matched files according to named and unnamed regex groups, and save the result as a json file (pathmatcher_tree.json).
   -l /some/folder/filename.log, --log /some/folder/filename.log
-                        Path to the log file. (Output will be piped to both the
-stdout and the log file)
+                        Path to the log file. (Output will be piped to both the stdout and the log file)
   -v, --verbose         Verbose mode (show more output).
-  --silent              No console output (but if --log specified, the log will
-still be saved in the specified file).
+  --silent              No console output (but if --log specified, the log will still be saved in the specified file).
+
 ```
 
 ## Libraries
@@ -244,12 +209,16 @@ This script will not only guide you through these steps, in the correct order, b
 
 There is a CLI user interface: you can skip steps you already done or don't want to do, skip patients, or reload another image (for step 4, to check other functional images).
 
+Note that the last step, extraction of framewise displacement motion metrics from functional images, can be done without requiring matlab nor a matlab wrapper (and hence should work on any platform), by using the `--motiononly` and `--regex_motion` switches (this will directly look for the `rp_*.txt` files that you previously generated with `spm_realign`).
+
 ### Usage
 
 ```
-usage: reorientation_registration_helper.py [-h] -i /some/path [-v]
+usage: reorientation_registration_helper-cli.exe [-h] -i /some/path [-ra "reg_expr+/anat\.(img|nii)"]
+                                                 [-rf "reg_expr+/func\.(img|nii)"] [-rp "reg_expr+/rp_.+\.txt"] [-m]
+                                                 [-v]
 
-Reorientation and registration helper v1.0
+Reorientation and registration helper v1.7.4
 Description: Guide and automate the file selection process that is required in SPM between each reorientation/registration.
 
 No more useless clicks, just do the reorientation/registration in batch, you don't need to worry about selecting the corresponding files, this helper will do it for you.
@@ -265,8 +234,16 @@ Note3: you need the pathmatcher.py library (see lrq3000 github).
 optional arguments:
   -h, --help            show this help message and exit
   -i /some/path, --input /some/path
-                        Path to the input folder (the root directory where you placed the files with a tree structure of [Condition]/[id]/data/(mprage|rest)/*.(nii|hdr|img)
+                        Path to the input folder (the root directory where you placed the files, the default supported tree structure being: "Condition/subject_id/data/(sess_id)?/(mprage|rest)/*.(img|nii)". You can also use --regex_anat and --regex_func to define your own directory layout.
+  -ra "(reg_expr)+/anat\.(img|nii)", --regex_anat "(reg_expr)+/anat\.(img|nii)"
+                        Regular expression to match anatomical images (default: Liege CRC scheme). Use regex groups to match with functional regex (if you want to do step 4 - manual coreg). Note: should target nii or img, not hdr.
+  -rf "(reg_expr)+/func\.(img|nii)", --regex_func "(reg_expr)+/func\.(img|nii)"
+                        Regular expression to match functional images (default: Liege CRC scheme). Regex groups will be matched with the anatomical regex, so you should provide the same groups for both regex. Note: should target nii or img, not hdr (using non-capturing group, eg: ".*\.(?:img|nii)". If a named group (?P<func>...) is specified, this will allow to separately coregister any file matching this group, which will be removed from the list of regex groups (thus this group is additional, it does not count in the "same number of groups" rule).
+  -rp "(reg_expr)+/rp_.+\.txt", --regex_motion "(reg_expr)+/rp_.+\.txt"
+                        Regular expression to match motion parameter files rp_*.txt as generated by spm_realign. If this argument is provided, motion parameters will be fetched from these files directly instead of recalculating from functional images. The regex needs to contain at least one group in parentheses to define a key for the output excel file.
+  -m, --motiononly      If true, and if --regex_motion is specified, then only this step will be done, using the already generated rpfiles.
   -v, --verbose         Verbose mode (show more output).
+
 ```
 
 ### Libraries

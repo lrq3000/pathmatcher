@@ -292,9 +292,7 @@ No more useless clicks, just do the reorientation/registration in batch, you don
 
 If you have tqdm installed, a nice progress bar will tell you how many subjects are remaining to be processed and how much time will it take at your current pace.
 
-Note: you need to `pip install mlab` before using this script.
-Note2: you need to have set both spm and spm_auto_reorient in your path in MATLAB before using this script.
-Note3: you need the pathmatcher.py library (see lrq3000 github).
+Note: you need to have set both spm and spm_auto_reorient in your path in MATLAB before using this script.
 
     ''' % __version__
     ep = ''' '''
