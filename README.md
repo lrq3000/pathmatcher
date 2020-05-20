@@ -12,9 +12,7 @@ If you happen to know this situation, this tool might help you: just specify a r
 
 This module works for any file management purpose, but it is particularly optimized via the reorientation_registration_helper.py submodule to work for neuroimaging, such as reorganizing very fast any dataset into a BIDS compliant format.
 
-This application can also be used as a Python module, so that you can include it in a pipeline to (semi-)automate repetitive stuff, like selecting the appropriate files to open in your favorite tool like SPM. For an exemple, see the script `reorient_pipeline` at the root of this repository.
-
-As a Python module, it can not only match inputpaths, but also group them dynamically in a tree-like structure (a recursive dict) depending on the named regexp groups. This is a very useful and powerful too to quickly match multi-modal data and group them together (eg, structural and functional images) together, per subject and per study, in a single command. See `reorient_registration_helper.py` for an example use.
+This application can also be used as a Python module, so that you can include it in a pipeline to (semi-)automate repetitive stuff, like selecting the appropriate files to open in your favorite tool like SPM. As a Python module, it can not only match input paths, but also group them dynamically in a tree-like structure (a recursive dict) depending on the named regexp groups. This is a very useful and powerful too to quickly match multi-modal data and group them together (eg, structural and functional images) together, per subject and per study, in a single command. See `reorient_registration_helper.py` for an example use.
 
 Runs on Python 3 (Python 3.7 and 3.8 tested), and a previous version worked for Python 2.7.15 although compatibility isn't guaranteed anymore since Python 2 support is now deprecated.
 
