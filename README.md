@@ -20,6 +20,16 @@ Runs on Python 3 (Python 3.7 and 3.8 tested), and a previous version worked for 
 
 If you are not experienced with [regular expressions](http://regexone.com/), you can use online tools such as [Pythex](http://pythex.org/) to instantly test your regexp.
 
+## Install
+
+Simply use pypi:
+
+```
+pip install --upgrade pathmatcher
+```
+
+Or on Windows you can use the prebuilt binaries in the [GitHub Releases](https://github.com/lrq3000/pathmatcher/releases).
+
 ## Quickstart
 
 Let's say you have a directory named "root", with subdirectories, and inside each subdirectory you have some files. Now, you want to reorganize so that all files are in one single folder, but you want to keep the original subfolder name but prepend it in the filename.
