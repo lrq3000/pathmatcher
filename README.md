@@ -1,4 +1,4 @@
-# Pathmatcher: Regular Expression Path Matcher
+# Pathmatcher: Manipulate file paths trees like simple text using powerful regular expressions!
 
 [![PyPI-Status](https://img.shields.io/pypi/v/pathmatcher.svg)](https://pypi.org/project/pathmatcher)
 [![PyPI-Versions](https://img.shields.io/pypi/pyversions/pathmatcher.svg?logo=python&logoColor=white)](https://pypi.org/project/pathmatcher)
