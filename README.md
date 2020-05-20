@@ -16,7 +16,7 @@ This application can also be used as a Python module, so that you can include it
 
 Runs on Python 3 (Python 3.7 and 3.8 tested), and a previous version worked for Python 2.7.15 although compatibility isn't guaranteed anymore since Python 2 support is now deprecated.
 
-If you are not experienced with [regular expressions](http://regexone.com/), you can use online tools such as [Pythex](http://pythex.org/) to instantly test your regexp.
+If you are not familliar with [regular expressions](http://regexone.com/), you can use online tools such as [Pythex](http://pythex.org/) to instantly test your regexp, and [this easy tutorial](https://github.com/ziishaned/learn-regex) to learn how this works.
 
 ## Install
 
