@@ -14,14 +14,129 @@ This module works for any file management purpose, but it is particularly optimi
 
 This application can also be used as a Python module, so that you can include it in a pipeline to (semi-)automate repetitive stuff, like selecting the appropriate files to open in your favorite tool like SPM. For an exemple, see the script `reorient_pipeline` at the root of this repository.
 
+As a Python module, it can not only match inputpaths, but also group them dynamically in a tree-like structure (a recursive dict) depending on the named regexp groups. This is a very useful and powerful too to quickly match multi-modal data and group them together (eg, structural and functional images) together, per subject and per study, in a single command. See `reorient_registration_helper.py` for an example use.
+
 Runs on Python 3 (Python 3.7 and 3.8 tested), and a previous version worked for Python 2.7.15 although compatibility isn't guaranteed anymore since Python 2 support is now deprecated.
 
 If you are not experienced with [regular expressions](http://regexone.com/), you can use online tools such as [Pythex](http://pythex.org/) to instantly test your regexp.
 
+## Quickstart
+
+Let's say you have a directory named "root", with subdirectories, and inside each subdirectory you have some files. Now, you want to reorganize so that all files are in one single folder, but you want to keep the original subfolder name but prepend it in the filename.
+
+You can match them like this:
+
+```
+pathmatcher -i "root" -ri "(\dir)/(.*)" --test
+```
+
+The arguments are as follows:
+* `-i` is the input root directory from where the recursive file search will start.
+* `-ri` is the input paths regular expression, to match the files you want. The matching is partial by default, so you can just type part of the filepath you want to match, not the whole (if you want the regex to match the whole path, use a regex starting with `^` and ending with `$` such as `"^my/whole/path.ext$"`). `(.*)` will match anything, and `\dir` is a special argument that will match any directory (or file) until the next subdirectory level, which kind of allows a virtual walk through a tree. All paths are specified with `/`, never with `\`, whatever the platform (including on Windows OSes).
+* `--test` will test whether at least one file can be matched. This is great to quickly test whether a regular expression is adequately matching the thing you want, without having to walk through all files.
+
+Here is the output we get:
+
+```
+== Regex Path Matcher started ==
+
+Parameters:
+- Input root: root
+- Input regex: ([^\\/]*?)/(.*)
+- Output root: None
+- Output regex: None
+- Full arguments: X:\Path\To\pathmatcher -i root -ri (\dir)/(.*) --test
+
+
+Computing paths matching and simulation report, please wait (total time depends on files count - filesize has no influence). Press CTRL+C to abort
+
+Match: folderA/file1.txt
+
+0files [00:00, ?files/s]
+End of simulation. 1 files matched.
+```
+
+Since we have matched one file, this shows the regexp works, we're good to go.
+
+Note: In the case it didn't work (no file matched), and there are lots of files, you can prematurely stop the file search by pressing CTRL+C.
+
+Next, type this:
+
+```
+pathmatcher -i "root" -ri "(\dir)/(.*)" -o "out" -ro "\1_\2" --copy
+```
+
+This reuses the previous command's input arguments (except `--test`) and adds the 3 following arguments:
+* `--copy` will copy the matched files to an output folder, potentially with a modified filename if specified in `-ro`. Alternative commands are: `--move`, `--move_fast`, `--delete`, `--symlink`.
+* `-o` is the output directory.
+* `-ro` is the output paths regular expression. This allows to dynamically change the output filenames by reusing regexp groups from the matched input paths. Here, we reuse the subdirectory name captured in `\1` and reuse it to prepend before the original input path `\2`.
+
+Before applying any file modification operation, pathmatcher will provide a complete simulation report of what it plans to do, including whether there will be overwriting conflicts (eg, 2 different files will get the same filename).
+
+Here is the simulation report for our command above:
+
+```
+== REGEX PATH MATCHER SIMULATION REPORT ==
+Total number of files matched: 6
+Parameters:
+- Input root: b'root'
+- Input regex: ([^\\/]*?)/(.*)
+- Output root: b'out'
+- Output regex: \1_\2
+- Full arguments: X:\Path\To\pathmatcher -i root -ri (\dir)/(.*) -o out -ro \1_\2 --copy
+
+List of matched files:
+* folderA/file1.txt --> folderA_file1.txt  
+* folderA/file2.txt --> folderA_file2.txt  
+* folderA/file3.txt --> folderA_file3.txt  
+* folderB/file4.txt --> folderB_file4.txt  
+* folderB/file5.txt --> folderB_file5.txt  
+* folderB/file6.txt --> folderB_file6.txt  
+```
+
+By default, the simulation report is saved as `pathmatcher_report.txt` in the current terminal folder (as shown by `pwd`) and is opened in the default text editor. This behavior can be modified using `--noreport``, which will print the simulation report directly in the terminal.
+
+Now, we manually review the simulation report, and we can see that everything is going as planned.
+
+Let's go back to the terminal:
+
+```
+== Regex Path Matcher started ==
+
+Parameters:
+- Input root: root
+- Input regex: ([^\\/]*?)/(.*)
+- Output root: out
+- Output regex: \1_\2
+- Full arguments: X:\Path\To\pathmatcher -i root -ri (\dir)/(.*) -o out -ro \1_\2 --copy
+
+
+Computing paths matching and simulation report, please wait (total time depends on files count - filesize has no influence). Press CTRL+C to abort
+
+12files [00:00, ?files/s]
+End of simulation. 6 files matched.
+Preparing simulation report, please wait a few seconds...
+Opening simulation report with your default editor, a new window should open.
+
+
+No conflict detected. You are good to go!
+Do you want to apply the result of the path reorganization simulation on 6 files? [Y/N]:
+```
+
+The terminal confirms that there are no conflicts (which would have appeared in the simulation report too), and asks us whether we want to proceed.
+
+If we type `Y` and tap Enter, the files will be copied and renamed according to the simulation report above. If we type `N` or simply CTRL+C, the application stops.
+
+This concludes this quickstart. There is a lot more that you can do with this tool, such as matching a precise number range (let's say you have images numbered 1 to 100 and you want to delete the first 3, you can use `-ra 4:1-3 --delete` where `4` is the position of the input regexp matching group that matches the number in your input paths). By default, only paths leading to a file are considered as a leaf and hence walked, with directories being considered as nodes (this is to avoid processing multiple times the same directory leading to various paths - with files we are sure it's a leaf, there is a unique path in the tree leading to it in theory), but you can specify `--dir` to consider any directory as a leaf (in which case the walk order is as follows: first the files, then the deepest subdirectories, then progressively upwards to the root, and in alphabetical order).
+
+There is also the very powerful `--tree` option, also available as an argument in the Python module, which allows to group together in a tree-like structure the matched input files, which is a very powerful way to match multi-modal data and cluster them together in usually a single command.
+
+Pro tip: if you can't get a file reorganization task done in a single command, try to break down your task into several smaller steps, such as for example first renaming, then moving, then renaming again, then moving again, then deleting the unnecessary files, etc. Usually, a seemingly impossible file reorganization task is easily done with a few smaller `pathmatcher` calls.
+
 ## Usage
 
 ```
-usage: pathmatcher-cli.exe [-h] -i /some/path -ri "sub[^/]+/\d+" [-o /new/path] [-ro "newsub/\1"] [-c] [-s] [-m]
+usage: pathmatcher [-h] -i /some/path -ri "sub[^/]+/\d+" [-o /new/path] [-ro "newsub/\1"] [-c] [-s] [-m]
                            [--move_fast] [-d] [-t] [--dir] [-y] [-f] [--show_fullpath] [-ra 1:10-255]
                            [-re "newsub/\1"] [--report pathmatcher_report.txt] [--noreport] [--tree]
                            [-l /some/folder/filename.log] [-v] [--silent]
@@ -214,7 +329,7 @@ Note that the last step, extraction of framewise displacement motion metrics fro
 ### Usage
 
 ```
-usage: reorientation_registration_helper-cli.exe [-h] -i /some/path [-ra "reg_expr+/anat\.(img|nii)"]
+usage: reorientation_registration_helper [-h] -i /some/path [-ra "reg_expr+/anat\.(img|nii)"]
                                                  [-rf "reg_expr+/func\.(img|nii)"] [-rp "reg_expr+/rp_.+\.txt"] [-m]
                                                  [-v]
 
