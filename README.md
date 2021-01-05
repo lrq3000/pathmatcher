@@ -30,7 +30,7 @@ Or on Windows you can use the prebuilt binaries in the [GitHub Releases](https:/
 
 ## Quickstart
 
-This section is a hands-on introduction illustrating a typical session of pathmatching, from how to quickly draft a regular expression (regexp) that matches your files to how to apply it to meet your objectives.
+This section is a hands-on introduction illustrating the steps of a typical session of pathmatching, from how to quickly draft a regular expression (regexp) that matches your files to how to apply it to meet your objectives.
 
 Let's say you have a directory named "root", with subdirectories, and inside each subdirectory you have some files. Now, you want to reorganize so that all files are in one single folder, but you want to keep the original subfolder name but prepend it in the filename. Here is a schema of this files structure:
 
