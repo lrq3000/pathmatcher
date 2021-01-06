@@ -10,7 +10,7 @@ If you often run experiments, you use scripts and applications, with some that y
 
 If you happen to know this situation, this tool might help you: just specify a regular expression matching the files you need, enter an output regular expression (that can reuse parts of the input files, for example your subjects ids, using regexp groups and recall), and then launch the program.
 
-This module works for any file management purpose, but it is particularly optimized via the reorientation_registration_helper.py submodule to work for neuroimaging, such as reorganizing very fast any dataset into a BIDS compliant format.
+This module works for any file management purpose, although it was primarily created to work for neuroimaging preprocessing tasks, such as reorganizing very fast any dataset into a BIDS compliant format. It can also be combined with the bundled reorientation_registration_helper.py submodule, showcasing how this module can be combined with MATLAB and SPM to semi-automate the manual anatomical reorientation of brain images to the AC-PC plane.
 
 This application can also be used as a Python module, so that you can include it in a pipeline to (semi-)automate repetitive stuff, like selecting the appropriate files to open in your favorite tool like SPM. As a Python module, it can not only match input paths, but also group them dynamically in a tree-like structure (a recursive dict) depending on the named regexp groups. This is a very useful and powerful too to quickly match multi-modal data and group them together (eg, structural and functional images) together, per subject and per study, in a single command. See `reorient_registration_helper.py` for an example use.
 
