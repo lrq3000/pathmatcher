@@ -694,7 +694,7 @@ Note: you need to have set both spm and spm_auto_reorient in your path in MATLAB
                 for i, k in enumerate(funclists.keys()):
                     funclist = funclists[k]
                     # Wait for user to be ready
-                    uchoice = ask_next(msg='Open next registration for subject %s session %s (%i/%i)? Enter to [c]ontinue, Skip to [n]ext session, [S]kip to next subject, [A]bort: ' % (im_key, str(k), i+1, len(funclists)))  # ask user if we load the next file?
+                    uchoice = ask_next(msg='Open next registration for subject %s condition %s (%i/%i)? Enter to [c]ontinue, Skip to [n]ext condition, [S]kip to next subject, [A]bort: ' % (im_key, str(k), i+1, len(funclists)))  # ask user if we load the next file?
                     if uchoice is None: break
                     if uchoice == False: continue
                     select_t2_nb = 0  # for user to specify a specific T2 image, by default the first image (because in general we coregister the first volume on structural)
