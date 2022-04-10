@@ -664,8 +664,8 @@ Note: you need to have set both spm and spm_auto_reorient in your path in MATLAB
                     #mlab.workspace.functionalcoreg(im_anat, im_func, im_func_others, nout=0)  # matlab_wrapper
                     #mlab.run_func('functionalcoreg.m', im_anat, im_func, im_func_others)  # python-matlab-bridge
                     # Alternative for other libraries
-                    matlab.cd(os.path.dirname(im_func))  # Change MATLAB current directory to the functional images dir (no real reason)
-                    matlab.functionalcoreg(im_anat, im_func, im_func_others)
+                    mlab.cd(os.path.dirname(im_func))  # Change MATLAB current directory to the functional images dir (no real reason)
+                    mlab.functionalcoreg(im_anat, im_func, im_func_others)
 
         # == MANUAL COREGISTRATION
         print("\n=> STEP6: MANUAL COREGISTRATION OF FUNCTIONAL IMAGES")
