@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-#
-
 from __future__ import unicode_literals
 from builtins import object
 import sys
@@ -33,11 +30,17 @@ class Tee(object):
 
     def close(self):
         """ Restore stdout and close file when Tee is closed """
-        self.flush() # commit all latest changes before exiting
+        try:
+            self.flush() # commit all latest changes before exiting
+        except:
+            pass  # sometimes it's already closed, just skip
         if not self.nostdout and hasattr(self, 'stdout'):
             sys.stdout = self.stdout
             self.stdout = None
         if self.file: self.file.close()
+
+    def __del__(self):
+        self.close()
 
     def write(self, data, end="\n", flush=True):
         """ Output data to stdout and/or file """

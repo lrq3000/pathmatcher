@@ -20,13 +20,33 @@ If you are not familliar with [regular expressions](http://regexone.com/), you c
 
 ## Install
 
-Simply use pypi:
+For Python 3.7+:
 
 ```
 pip install --upgrade pathmatcher
 ```
 
 Or on Windows you can use the prebuilt binaries in the [GitHub Releases](https://github.com/lrq3000/pathmatcher/releases).
+
+For the latest development release, use:
+
+```
+pip install --upgrade pathmatcher --pre
+```
+
+For the cutting-edge code (likely unstable, do not use in production!), use:
+
+```
+pip install --upgrade git+https://github.com/lrq3000/pathmatcher
+```
+
+For Python 2.7 to 3.6, the last compatible version is v1.7.6:
+
+```
+pip install --upgrade pathmatcher==1.7.6
+```
+
+This will install two commands in your environment: `pathmatcher` and `reorientation_registration_helper`.
 
 ## Quickstart
 

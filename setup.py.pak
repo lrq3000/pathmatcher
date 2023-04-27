@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2020 Stephen Larroque <LRQ3000@gmail.com>
+# DEPRECATED by pyproject.toml in Python 3
 
 # See:
 # https://docs.python.org/2/distutils/setupscript.html
