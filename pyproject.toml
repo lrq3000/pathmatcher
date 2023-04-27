@@ -91,7 +91,7 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.scripts]
-pathmatcher = "pathmatcher=pathmatcher.pathmatcher:main"
+pathmatcher = "pathmatcher.pathmatcher:main"
 reorientation_registration_helper = "pathmatcher.reorientation_registration_helper:main"
 
 #[tool.setuptools]
