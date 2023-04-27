@@ -31,13 +31,13 @@ Or on Windows you can use the prebuilt binaries in the [GitHub Releases](https:/
 For the latest development release, use:
 
 ```
-pip install --upgrade pathmatcher --pre
+pip install --upgrade pathmatcher --pre --use-pep517
 ```
 
 For the cutting-edge code (likely unstable, do not use in production!), use:
 
 ```
-pip install --upgrade git+https://github.com/lrq3000/pathmatcher
+pip install --upgrade git+https://github.com/lrq3000/pathmatcher --pre --use-pep517
 ```
 
 For Python 2.7 to 3.6, the last compatible version is v1.7.6:
