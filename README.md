@@ -23,7 +23,7 @@ If you are not familliar with [regular expressions](http://regexone.com/), you c
 For Python 3.7+:
 
 ```
-pip install --upgrade pathmatcher
+pip install --upgrade pathmatcher --use-pep517
 ```
 
 Or on Windows you can use the prebuilt binaries in the [GitHub Releases](https://github.com/lrq3000/pathmatcher/releases).
