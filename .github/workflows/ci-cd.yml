@@ -10,7 +10,7 @@ name: ci-cd
 on:
   push:  # build on every commit push (for debug)
     branches:
-      - main
+      - master
   # pull_request:  # build on every pull request
   release:  # build on every releases
     types:
