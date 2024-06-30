@@ -292,7 +292,7 @@ No more useless clicks, just do the reorientation/registration in batch, you don
 
 If you have tqdm installed, a nice progress bar will tell you how many subjects are remaining to be processed and how much time will it take at your current pace.
 
-Note: you need to have set both spm and spm_auto_reorient in your path in MATLAB before using this script.
+Note: you need to have set both spm and auto_acpc_reorient in your path in MATLAB before using this script.
 
     ''' % __version__
     ep = ''' '''
@@ -427,10 +427,10 @@ Note: you need to have set both spm and spm_auto_reorient in your path in MATLAB
         anat_list = [os.path.join(rootfolderpath, file) for file in anat_list]  # calculate full absolute path instead of relative (since we need to pass them to MATLAB)
         print("Found %i anatomical images." % len(anat_list))
 
-        # == AUTOMATIC REORIENTATION VIA SPM_AUTO_REORIENT
+        # == AUTOMATIC REORIENTATION VIA AUTO_ACPC_REORIENT
         # Get the list of anatomical images
-        print("\n=> STEP1: SPM_AUTO_REORIENT OF STRUCTURAL MRI")
-        print("Please make sure to install SPM12 and spm_auto_reorient.m tool beforehand, from: https://github.com/lrq3000/spm_auto_reorient")
+        print("\n=> STEP1: AUTO_ACPC_REORIENT OF STRUCTURAL MRI")
+        print("Please make sure to install SPM12 and auto_acpc_reorient.m tool beforehand, from: https://github.com/lrq3000/auto_acpc_reorient")
         print("NOTE: if you already did this step and began STEP2 (manual reorient), then SKIP THIS STEP to avoid losing your manual progress!")
         if ask_step():  # Wait for user to be ready
             print("Starting the auto-reorienting process, please wait (this can take a while)...")
@@ -438,9 +438,9 @@ Note: you need to have set both spm and spm_auto_reorient in your path in MATLAB
             for file in tqdm(anat_list, leave=True, unit='files'):
                 if verbose: print("- Processing file: %s" % file)
                 try:
-                    #mlab.workspace.spm_auto_reorient(file, nout=0)
-                    #mlab.run_func('spm_auto_reorient.m', file)  # python-matlab-bridge
-                    mlab.spm_auto_reorient(file)  # alternative for other libraries
+                    #mlab.workspace.auto_acpc_reorient(file, nout=0)
+                    #mlab.run_func('auto_acpc_reorient.m', file)  # python-matlab-bridge
+                    mlab.auto_acpc_reorient(file)  # alternative for other libraries
                 except Exception as exc:
                     print('ERROR: an exception happened while auto-reorienting file %s' % file)
                     print(exc)

@@ -9,8 +9,8 @@ function functionalcoreg(struct,func,others,mode,modality)
 % It is advised to check (and fix if necessary) manually the result (using CheckReg).
 %
 % Note: a two-line alternative to this script is to do the following:
-% spm_auto_reorient(func, 'epi', others, 'mi');
-% spm_auto_reorient(func, struct, others, 'mi');
+% auto_acpc_reorient(func, 'epi', others, 'mi');
+% auto_acpc_reorient(func, struct, others, 'mi');
 %
 % IN:
 % - struct      : filename of the reference structural image
@@ -68,13 +68,13 @@ end
 
 % PRE-COREGISTRATION ON TEMPLATE
 % First, coregister on template brain
-% This greatly enhance the results, particularly if the structural was auto-reoriented on MNI (using github.com/lrq3000/spm_auto_reorient) so that the template EPI is in the same space as the structural, hence why this enhances the results
+% This greatly enhance the results, particularly if the structural was auto-reoriented on MNI (using github.com/lrq3000/auto_acpc_reorient) so that the template EPI is in the same space as the structural, hence why this enhances the results
 % If this is not done, most often the coregistration will get the rotation right but not the translation
 fprintf('Pre-coregistration on %s template, please wait...\n', modality);
 if strcmp(mode,'affine')
-    spm_auto_reorient(func, modality, others, 'affine');
+    auto_acpc_reorient(func, modality, others, 'affine');
 elseif strcmp(mode,'mi') | strcmp(mode,'both')
-    spm_auto_reorient(func, modality, others, 'mi');
+    auto_acpc_reorient(func, modality, others, 'mi');
 end %endif
 if strcmp(mode, 'precoreg')
     return
