@@ -71,15 +71,14 @@ jobs:
           pattern: my-artifact-*
           merge-multiple: true
           path: dist
-          overwrite: true
 
       - name: Upload to TestPyPi
         uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
-          # To test: repository_url: https://test.pypi.org/legacy/  # and also change token: ${{ secrets.PYPI_API_TOKEN }} to secrets.TEST_PYPI_API_TOKEN # for more infos on registering and using TestPyPi, read: https://py-pkgs.org/08-ci-cd#uploading-to-testpypi-and-pypi -- remove the repository_url to upload to the real PyPi
+          repository-url: https://test.pypi.org/legacy/
+          # To test: repository-url: https://test.pypi.org/legacy/  # and also change token: ${{ secrets.PYPI_API_TOKEN }} to secrets.TEST_PYPI_API_TOKEN # for more infos on registering and using TestPyPi, read: https://py-pkgs.org/08-ci-cd#uploading-to-testpypi-and-pypi -- remove the repository_url to upload to the real PyPi
 
       - name: Test install from TestPyPI
         run: |
@@ -102,7 +101,6 @@ jobs:
           pattern: my-artifact-*
           merge-multiple: true
           path: dist
-          overwrite: true
 
       - uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
