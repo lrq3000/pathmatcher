@@ -177,6 +177,11 @@ Pro tip: if you can't get a file reorganization task done in a single command, t
 
 ## Usage
 
+### Commandline
+
+Pathmatcher installs two console binaries that you can directly call from the commandline.
+
+
 ```
 usage: pathmatcher [-h] -i /some/path -ri "sub[^/]+/\d+" [-o /new/path] [-ro "newsub/\1"] [-c] [-s] [-m]
                            [--move_fast] [-d] [-t] [--dir] [-y] [-f] [--show_fullpath] [-ra 1:10-255]
@@ -240,7 +245,19 @@ optional arguments:
 
 ```
 
+### As a Python module
+
+To use pathmatcher from a Python script, use the following:
+
+```
+>>> from pathmatcher import pathmatcher
+```
+
+You can then call ```pathmatcher()```.
+
 ## Libraries
+
+Note: all the dependencies should be installed when using `pip install` thanks to the pyproject.toml standard.
 
 ### Required
 
@@ -253,7 +270,7 @@ optional arguments:
 
 * **[tqdm](https://github.com/tqdm/tqdm/)** (for progress bar, **highly recommended**)
 * scandir (for faster file walking and simulation report)
-* Gooey (for gui)
+* Gooey (for gui - unmaintained likely not working anymore as of 2024)
 
 ## Tutorial
 
@@ -368,7 +385,13 @@ There is a CLI user interface: you can skip steps you already done or don't want
 
 Note that the last step, extraction of framewise displacement motion metrics from functional images, can be done without requiring matlab nor a matlab wrapper (and hence should work on any platform), by using the `--motiononly` and `--regex_motion` switches (this will directly look for the `rp_*.txt` files that you previously generated with `spm_realign`).
 
+### Dependencies
+
+To use this auxiliary tool, you need to `pip install numpy` beforehand.
+
 ### Usage
+
+#### Commandline
 
 ```
 usage: reorientation_registration_helper [-h] -i /some/path [-ra "reg_expr+/anat\.(img|nii)"]
@@ -403,10 +426,21 @@ optional arguments:
 
 ```
 
+#### As a Python module
+
+To use this auxiliary tool from a Python script, use the following:
+
+```
+>>> from pathmatcher.reorientation_registration_helper import main as reorientation_registration_helper
+```
+
+You can then call ```reorientation_registration_helper()```.
+
 ### Libraries
 
 #### Required
 
+* numpy >= 1.18.1, for the optional last step to generate motion metrics from functional images (not installed by default to dependencies minimal for the main tool pathmatcher, please install it beforehand)
 * argparse
 * pathmatcher
 * mlabwrap aka matlap_wrapper ([Python2](https://github.com/mrkrd/matlab_wrapper) version, [Python3](https://github.com/deeuu/matlab_wrapper/tree/python3) version as provided with this module)
@@ -418,4 +452,3 @@ optional arguments:
 
 * scandir, to scan files faster
 * tqdm, to show the progress bar
-* numpy >= 1.18.1, for the optional last step to generate motion metrics from functional images

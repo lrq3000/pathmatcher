@@ -377,7 +377,7 @@ def main(argv=None, return_report=False, regroup=False):
     #==== COMMANDLINE PARSER ====
 
     #== Commandline description
-    desc = '''Regex PathMatcher v%s
+    desc = r'''Regex PathMatcher v%s
 Description: Match paths using regular expression, and then generate a report. Can also substitute using regex to generate output paths. A copy mode is also provided to allow the copy of files from input to output paths.
 This app is essentially a path matcher using regexp, and it then rewrites the path using regexp, so that you can reuse elements from input path to build the output path.
 This is very useful to reorganize folders for experiments, where scripts/softwares expect a specific directories layout in order to work.
@@ -573,9 +573,9 @@ In addition to the switches provided below, using this program as a Python modul
     
     # -- Preprocess regular expression to add aliases
     # Directory alias
-    regex_input = regex_input.replace('\dirnodot', r'[^\\/.]*?').replace('\dir', r'[^\\/]*?')
-    regex_output = regex_output.replace('\dirnodot', r'[^\\/.]*?').replace('\dir', r'[^\\/]*?') if regex_output else regex_output
-    regex_exists = regex_exists.replace('\dirnodot', r'[^\\/.]*?').replace('\dir', r'[^\\/]*?') if regex_exists else regex_exists
+    regex_input = regex_input.replace(r'\dirnodot', r'[^\\/.]*?').replace(r'\dir', r'[^\\/]*?')
+    regex_output = regex_output.replace(r'\dirnodot', r'[^\\/.]*?').replace(r'\dir', r'[^\\/]*?') if regex_output else regex_output
+    regex_exists = regex_exists.replace(r'\dirnodot', r'[^\\/.]*?').replace(r'\dir', r'[^\\/]*?') if regex_exists else regex_exists
 
     #### Main program
     # Test if regular expressions are correct syntactically
