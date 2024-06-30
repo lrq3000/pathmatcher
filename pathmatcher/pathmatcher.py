@@ -316,6 +316,70 @@ def pop_first_namedgroup(groupdict, value):
             return k, v, groupdict
     return False, value, groupdict
 
+def get_original_commandline(orig_argv=False):
+    """Recreate the original command line string that can be replayed nicely, with a one-liner command"""
+    # By Stason, 2021, licensed under CC BY-SA 4.0 https://stackoverflow.com/a/70514521/1121352
+    #
+    # Note that it is impossible to get back the original commandline as-is, as by the time it arrives
+    # to the Python interpreter, the shell has already parsed it and removed some quotes, etc.
+    # So here the trick is that we try to recreate it and add quotes wherever necessary.
+    # Note that since Python 3.10, we can use sys.orig_argv to get more of the original commandline.
+    if orig_argv:
+        argv = sys.orig_argv  # requires Python >= 3.10
+    else:
+        argv = sys.argv
+    return "%s %s" % (sys.executable, " ".join(map(shlex.quote, argv)))
+
+def get_original_commandline_advanced(max_width=80, full_python_path=False, orig_argv=False):
+    """
+    Return the original command line string that can be replayed 
+    nicely and wrapped for 80 char width
+    Args:
+        - max_width: the width to wrap for. defaults to 80
+        - full_python_path: whether to replicate the full path 
+          or just the last part (i.e. `python`). default to `False`
+    """
+    # By Stason, 2021, licensed under CC BY-SA 4.0 https://stackoverflow.com/a/70514521/1121352
+    #
+    # Note that it is impossible to get back the original commandline as-is, as by the time it arrives
+    # to the Python interpreter, the shell has already parsed it and removed some quotes, etc.
+    # So here the trick is that we try to recreate it and add quotes wherever necessary.
+    # Note that since Python 3.10, we can use sys.orig_argv to get more of the original commandline.
+
+    cmd = []
+
+    if orig_argv:
+        argv = sys.orig_argv  # requires Python >= 3.10
+    else:
+        argv = sys.argv
+
+    # deal with critical env vars
+    env_keys = ["CUDA_VISIBLE_DEVICES"]
+    for key in env_keys:
+        val = os.environ.get(key, None)
+        if val is not None:
+            cmd.append(f"{key}={val}")
+
+    # python executable (not always needed if the script is executable)
+    python = sys.executable if full_python_path else sys.executable.split("/")[-1]
+    cmd.append(python)
+
+    # now the normal args
+    cmd += list(map(shlex.quote, argv))
+
+    # split up into up to MAX_WIDTH lines with shell multi-line escapes
+    if max_width is not None:
+        lines = []
+        current_line = ""
+        while len(cmd) > 0:
+            current_line += f"{cmd.pop(0)} "
+            if len(cmd) == 0 or len(current_line) + len(cmd[0]) + 1 > max_width - 1:
+                lines.append(current_line)
+                current_line = ""
+    else:
+        lines = [" ".join(cmd)]
+    return "\\\n".join(lines)
+
 
 
 #***********************************
@@ -589,7 +653,8 @@ In addition to the switches provided below, using this program as a Python modul
     reportheaders.write("- Input regex: %s\n" % regex_input)
     reportheaders.write("- Output root: %s\n" % (outputpath.encode('utf-8') if outputpath else ''))
     reportheaders.write("- Output regex: %s\n" % regex_output)
-    reportheaders.write("- Full arguments: %s\n" % ' '.join(['"{}"'.format(arg) if ' ' in arg or '"' in arg else arg for arg in sys.argv]))  # Try to include quotes for string arguments, which we heuristically find by detecting the presence of spaces or quotes in the argument
+    reportheaders.write("- Full arguments: %s\n" % get_original_commandline())
+    reportheaders.write("- Full arguments (more complete): %s\n" % get_original_commandline_advanced(max_width=None))
     reportheaders.write("\r\n")  # Add a newline (Windows OS style so that it is readable in both Windows and Linux) at the end of the header
 
     #### Main program
