@@ -1,19 +1,8 @@
-# Makefile like config file for py-make
-# To use: `pip install py-make`
-# then calle `pymake <command>`
-# IMPORTANT: to be compatible with `python setup.py make alias`, you must make
-# sure that you only put one command per line, and ALWAYS put a line return
-# after an alias and before a command, eg:
-#
-#```
-#all:
-#	test
-#	install
-#test:
-#	nosetest
-#install:
-#	python setup.py install
-#    ```
+# This Makefile runs tests and builds the package to upload to pypi
+# To use this Makefile, pip install py3make
+# then cd to this folder, and do: py3make <command>
+# or: python.exe -m py3make <command>
+# You can also type `py3make -p` to list all commands, then `py3make <command>` to run the related entry.
 # CRITICAL NOTE: if you get a "FileNotFoundError" exception when trying to call @+python or @+make, then it is because you used spaces instead of a hard TAB character to indent! TODO: bugfix this. It happens only for @+ commands and for those after the first command (if the @+ command with spaces as indentation is the first and only statement in a command, it works!)
 
 .PHONY:
