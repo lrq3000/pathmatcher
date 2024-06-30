@@ -53,6 +53,7 @@ PY3 = (sys.version_info >= (3,0,0))
 
 import argparse
 import chardet
+import datetime
 import os
 import posixpath  # to generate unix paths
 import re
@@ -577,7 +578,25 @@ In addition to the switches provided below, using this program as a Python modul
     regex_output = regex_output.replace(r'\dirnodot', r'[^\\/.]*?').replace(r'\dir', r'[^\\/]*?') if regex_output else regex_output
     regex_exists = regex_exists.replace(r'\dirnodot', r'[^\\/.]*?').replace(r'\dir', r'[^\\/]*?') if regex_exists else regex_exists
 
+    # -- Prepare the headers of the report
+    reportheaders = StringIO()
+    reportheaders.write("Version: %s\n" % __version__)
+    reportheaders.write("Date: %s\n" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    reportheaders.write("Platform: %s\n" % sys.platform)
+    reportheaders.write("Python version: %s\n" % sys.version)
+    reportheaders.write("Parameters:\n")
+    reportheaders.write("- Input root: %s\n" % inputpath.encode('utf-8'))
+    reportheaders.write("- Input regex: %s\n" % regex_input)
+    reportheaders.write("- Output root: %s\n" % (outputpath.encode('utf-8') if outputpath else ''))
+    reportheaders.write("- Output regex: %s\n" % regex_output)
+    reportheaders.write("- Full arguments: %s\n" % ' '.join(['"{}"'.format(arg) if ' ' in arg or '"' in arg else arg for arg in sys.argv]))  # Try to include quotes for string arguments, which we heuristically find by detecting the presence of spaces or quotes in the argument
+    reportheaders.write("\r\n")  # Add a newline (Windows OS style so that it is readable in both Windows and Linux) at the end of the header
+
     #### Main program
+    # Start to write in the log file
+    ptee.write("== Pathmatcher started ==\n")
+    ptee.write(reportheaders.getvalue())
+
     # Test if regular expressions are correct syntactically
     try:
         regin = re.compile(str_to_raw(regex_input))
@@ -591,15 +610,6 @@ In addition to the switches provided below, using this program as a Python modul
         ptee.write("Regular expression is not correct, please fix it! Here is the error stack:\n")
         ptee.write(traceback.format_exc())
         return 1
-
-    ptee.write("== Regex Path Matcher started ==\n")
-    ptee.write("Parameters:")
-    ptee.write("- Input root: %s" % inputpath)
-    ptee.write("- Input regex: %s" % regex_input)
-    ptee.write("- Output root: %s" % outputpath)
-    ptee.write("- Output regex: %s" % regex_output)
-    ptee.write("- Full arguments: %s" % ' '.join(sys.argv))
-    ptee.write("\n")
 
     # == FILES WALKING AND MATCHING/SUBSTITUTION STEP
     files_list = []  # "to copy" files list, stores the list of input files and their corresponding output path (computed using regex)
@@ -704,21 +714,12 @@ In addition to the switches provided below, using this program as a Python modul
         outdict[file_op[1]] = outdict.get(file_op[1], 0) + 1
 
     # Build and show simulation report in user's default text editor
-    if noreport:
-        reportfile = StringIO()
-    else:
+    reportsim = StringIO()
+    if not noreport:
         reportfile = open(reportpath, 'w')
     try:
-        reportfile.write("== REGEX PATH MATCHER SIMULATION REPORT ==\n")
-        reportfile.write("Total number of files matched: %i\n" % len(files_list))
-        reportfile.write("Parameters:\n")
-        reportfile.write("- Input root: %s\n" % inputpath.encode('utf-8'))
-        reportfile.write("- Input regex: %s\n" % regex_input)
-        reportfile.write("- Output root: %s\n" % (outputpath.encode('utf-8') if outputpath else ''))
-        reportfile.write("- Output regex: %s\n" % regex_output)
-        reportfile.write("- Full arguments: %s" % ' '.join(sys.argv))
-        reportfile.write("\r\n")
-        reportfile.write("List of matched files:\n")
+        reportsim.write("Total number of files matched: %i\n" % len(files_list))
+        reportsim.write("List of matched files:\n")
         for file_op in files_list:
             conflict1 = False
             conflict2 = False
@@ -744,11 +745,21 @@ In addition to the switches provided below, using this program as a Python modul
                 showoutpath = file_op[1] if outputpath else None
 
             # Write into report file
-            reportfile.write("* %s %s %s %s %s" % (showinpath, "-->" if (outputpath or delete_mode) else "", showoutpath if outputpath else "", "[ALREADY_EXIST]" if conflict1 else '', "[CONFLICT]" if conflict2 else ''))
-            reportfile.write("\n")
+            reportsim.write("* %s%s%s%s%s\n" % (showinpath, " --> " if (outputpath or delete_mode) else "", showoutpath if outputpath else "", " [ALREADY_EXIST]" if conflict1 else '', " [CONFLICT]" if conflict2 else ''))
+        # End of the loop over files, add a blank line
+        reportsim.write("\r\n")
         if noreport:
-            reportfile.seek(0)
-            print(reportfile.read())
+            print(reportsim.getvalue())
+        else:
+            reportfile.write("== Pathmatcher simulation report ==")
+            reportfile.write("This is a simulation report of the path reorganization. No file has been moved/copied/deleted yet.")
+            reportfile.write(reportheaders.getvalue())
+            reportfile.write(reportsim.getvalue())
+            # Also write in the log file the results of the simulation report
+            if args.log:
+                with open(args.log, 'a') as logfile:
+                    logfile.write('Simulation report:')
+                    logfile.write(reportsim.getvalue())
     finally:
         try:
             reportfile.close()
