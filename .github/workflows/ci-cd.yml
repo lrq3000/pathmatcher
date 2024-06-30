@@ -8,9 +8,9 @@ name: ci-cd
 
 # Build only on creation of new releases
 on:
-  push:  # build on every commit push (for debug)
-    branches:
-      - master
+  #push:  # build on every commit push (for debug, so that we don't need to recreate a new release each time just to test)
+  #  branches:
+  #    - master
   # pull_request:  # build on every pull request
   release:  # build on every releases
     types:
@@ -98,6 +98,7 @@ jobs:
         with:
           # see https://github.com/actions/download-artifact/blob/main/docs/MIGRATION.md and https://github.com/actions/upload-artifact/issues/478
           # We download all generated artifacts and merge them all into one folder dist
+          # To debug, see: https://github.com/actions/upload-artifact?tab=readme-ov-file#where-does-the-upload-go
           pattern: my-artifact-*
           merge-multiple: true
           path: dist
