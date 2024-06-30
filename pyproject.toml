@@ -53,6 +53,7 @@ dependencies = [
     "chardet>=3.0.4",
     "tqdm>=4.46.0",
     "scandir>=1.10.0",
+    "future",
 ]
 
 [tool.setuptools.dynamic]
@@ -72,7 +73,7 @@ test = [  # minimum dependencies to run tests
     "pytest",
     "pytest-cov",
     #"coveralls",
-    "py-make",  # necessary to run the config files in tests/results/*.cfg
+    "py3make",  # necessary to run the config files in tests/results/*.cfg
 ]
 testmeta = [  # dependencies to test meta-data. Note that some of these dependencies make cibuildwheel choke on cryptography
     "build",

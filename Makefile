@@ -75,7 +75,7 @@ toxclean:
 installdev:
 	@+make prebuildclean
 	# Should work for both Py2 and Py3, --editable option and isolation builds work with both pyproject.toml and setup.cfg
-	@+python -m pip install --upgrade --editable . --verbose --use-pep517
+	@+python -m pip install --upgrade --editable .[test,testmeta]  --verbose --use-pep517
 
 install:
 	@+make prebuildclean
