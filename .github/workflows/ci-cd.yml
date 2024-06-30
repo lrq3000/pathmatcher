@@ -57,7 +57,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: my-artifact-${{ matrix.runs-on }}
-        #path: dist-${{ matrix.runs-on }}/*
+        path: dist/*
 
   upload_test_pypi:  # Upload to TestPyPi first to ensure that the release is OK (we will try to download it and install it afterwards), as recommended in https://py-pkgs.org/08-ci-cd#uploading-to-testpypi-and-pypi
     name: Upload to TestPyPi
