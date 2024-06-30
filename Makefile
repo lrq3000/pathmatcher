@@ -89,11 +89,9 @@ build:
 	@+python -sBm build  # do NOT use the -w flag, otherwise only the wheel will be built, but we need sdist for source distros such as Debian and Gentoo!
 	@+make testsetuppost
 
-pypi:
+upload:
 	twine upload dist/*
 
 buildupload:
-	@+make testsetup
 	@+make build
-	@+make pypimeta
-	@+make pypi
+	@+make upload
