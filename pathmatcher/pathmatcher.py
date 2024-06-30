@@ -816,8 +816,8 @@ In addition to the switches provided below, using this program as a Python modul
         if noreport:
             print(reportsim.getvalue())
         else:
-            reportfile.write("== Pathmatcher simulation report ==")
-            reportfile.write("This is a simulation report of the path reorganization. No file has been moved/copied/deleted yet.")
+            reportfile.write("== Pathmatcher simulation report ==\n")
+            reportfile.write("This is a simulation report of the path reorganization. No file has been moved/copied/deleted yet.\n")
             reportfile.write(reportheaders.getvalue())
             reportfile.write(reportsim.getvalue())
             # Also write in the log file the results of the simulation report
