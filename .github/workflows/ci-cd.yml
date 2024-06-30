@@ -54,6 +54,7 @@ jobs:
     - name: Save dist/ content for reuse in other GitHub Workflow blocks
       uses: actions/upload-artifact@v4
       with:
+        name: my-artifact-${{ matrix.runs-on }}
         path: dist/*
 
   upload_test_pypi:  # Upload to TestPyPi first to ensure that the release is OK (we will try to download it and install it afterwards), as recommended in https://py-pkgs.org/08-ci-cd#uploading-to-testpypi-and-pypi
@@ -64,8 +65,7 @@ jobs:
       - name: Unpack default artifact into dist/
         uses: actions/download-artifact@v4
         with:
-          # unpacks default artifact into dist/
-          # if `name: artifact` is omitted, the action will create extra parent dir
+          # see https://github.com/actions/download-artifact/blob/main/docs/MIGRATION.md and https://github.com/actions/upload-artifact/issues/478
           name: artifact
           path: dist
 
@@ -92,9 +92,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          # unpacks default artifact into dist/
-          # if `name: artifact` is omitted, the action will create extra parent dir
-          name: artifact
+          # see https://github.com/actions/download-artifact/blob/main/docs/MIGRATION.md and https://github.com/actions/upload-artifact/issues/478
+          pattern: my-artifact-*
+          merge-multiple: true
           path: dist
 
       - uses: pypa/gh-action-pypi-publish@v1.9.0
