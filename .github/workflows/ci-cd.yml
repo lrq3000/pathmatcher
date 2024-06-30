@@ -56,7 +56,7 @@ jobs:
     - name: Save dist/ content for reuse in other GitHub Workflow blocks
       uses: actions/upload-artifact@v4
       with:
-        name: my-artifact-${{ matrix.runs-on }}
+        name: my-artifact-${{ matrix.os }}
         path: dist/*
 
   upload_test_pypi:  # Upload to TestPyPi first to ensure that the release is OK (we will try to download it and install it afterwards), as recommended in https://py-pkgs.org/08-ci-cd#uploading-to-testpypi-and-pypi
@@ -71,6 +71,7 @@ jobs:
           pattern: my-artifact-*
           merge-multiple: true
           path: dist
+          overwrite: true
 
       - name: Upload to TestPyPi
         uses: pypa/gh-action-pypi-publish@v1.9.0
@@ -100,6 +101,7 @@ jobs:
           pattern: my-artifact-*
           merge-multiple: true
           path: dist
+          overwrite: true
 
       - uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
