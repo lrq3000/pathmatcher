@@ -14,7 +14,7 @@ This module works for any file management purpose, although it was primarily cre
 
 This application can also be used as a Python module, so that you can include it in a pipeline to (semi-)automate repetitive stuff, like selecting the appropriate files to open in your favorite tool like SPM. As a Python module, it can not only match input paths, but also group them dynamically in a tree-like structure (a recursive dict) depending on the named regexp groups. This is a very useful and powerful too to quickly match multi-modal data and group them together (eg, structural and functional images) together, per subject and per study, in a single command. See `reorient_registration_helper.py` for an example use.
 
-Runs on Python 3 (Python 3.7 and 3.8 tested), and a previous version worked for Python 2.7.15 although compatibility isn't guaranteed anymore since Python 2 support is now deprecated.
+Runs on Python 3 (Python 3.12 tested). A previous version worked for Python 2.7.15 although compatibility isn't guaranteed anymore since Python 2 support is now deprecated (but you can still use the older version, see below for instructions).
 
 If you are not familliar with [regular expressions](http://regexone.com/), you can use online tools such as [Pythex](http://pythex.org/) to instantly test your regexp, and [this easy tutorial](https://github.com/ziishaned/learn-regex) to learn how this works.
 
@@ -47,6 +47,10 @@ pip install --upgrade pathmatcher==1.7.6
 ```
 
 This will install two commands in your environment: `pathmatcher` and `reorientation_registration_helper`.
+
+## Maintenance status
+
+Note that both the pyInstaller self-contained binary and Gooey GUI are not maintained anymore, what is maintained are the commandline interface and Python module imports.
 
 ## Quickstart
 
