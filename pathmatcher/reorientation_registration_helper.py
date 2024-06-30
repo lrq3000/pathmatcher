@@ -63,11 +63,11 @@ import traceback
 
 if PY3:
     try:
-        import pathmatcher
+        from pathmatcher.pathmatcher import main as pathmatcher
     except Exception as exc:
-        from . import pathmatcher
+        from .pathmatcher.pathmatcher import main as pathmatcher
 else:
-    from . import pathmatcher
+    from .pathmatcher.pathmatcher import main as pathmatcher
 
 from collections import OrderedDict
 
@@ -422,7 +422,7 @@ Note: you need to have set both spm and auto_acpc_reorient in your path in MATLA
     if not motiononly:
         # == Anatomical files walking
         print("Please wait while the directories are scanned to find anatomical images...")
-        anat_list, conflict_flags = pathmatcher.pathmatcher(r' -i "{inputpath}" -ri "{regex_anat}" --silent '.format(**template_vars), True)
+        anat_list, conflict_flags = pathmatcher(r' -i "{inputpath}" -ri "{regex_anat}" --silent '.format(**template_vars), True)
         anat_list = [file[0] for file in anat_list]  # extract only the input match, there's no output anyway
         anat_list = [os.path.join(rootfolderpath, file) for file in anat_list]  # calculate full absolute path instead of relative (since we need to pass them to MATLAB)
         print("Found %i anatomical images." % len(anat_list))
@@ -496,7 +496,7 @@ Note: you need to have set both spm and auto_acpc_reorient in your path in MATLA
             # for condition in conditions_list[1:]:  # skip first condition, this is where we will copy the anatomical images from, to the other conditions
                 # template_vars["tocond"] = condition
                 # os.chdir(rootfolderpath)  # reset to rootfolder to generate the simulation report there
-                # pathmatcher.pathmatcher(r' -i "{inputpath}/{firstcond}" -ri "([^\/]+)/data/mprage/" -o "{inputpath}/{tocond}" -ro "\1/data/mprage/" --copy --force --yes --silent '.format(**template_vars), True)
+                # pathmatcher(r' -i "{inputpath}/{firstcond}" -ri "([^\/]+)/data/mprage/" -o "{inputpath}/{tocond}" -ro "\1/data/mprage/" --copy --force --yes --silent '.format(**template_vars), True)
 
         # == DETECT FUNCTIONAL IMAGES
         print("\n=> STEP4: DETECTION OF FUNCTIONAL IMAGES")
@@ -505,7 +505,7 @@ Note: you need to have set both spm and auto_acpc_reorient in your path in MATLA
         input()
         # -- Walk files and detect functional images (we already got structural)
         os.chdir(rootfolderpath)  # reset to rootfolder to generate the simulation report there
-        func_list, conflict_flags = pathmatcher.pathmatcher(r' -i "{inputpath}" -ri "{regex_func}" --silent '.format(**template_vars), True)  # TODO: this can likely be replaced now by the --tree option, and the whole loop below too, potentially being much more concise
+        func_list, conflict_flags = pathmatcher(r' -i "{inputpath}" -ri "{regex_func}" --silent '.format(**template_vars), True)  # TODO: this can likely be replaced now by the --tree option, and the whole loop below too, potentially being much more concise
         func_list = [file[0] for file in func_list]  # extract only the input match, there's no output anyway
         print("Found %i functional images." % len(func_list))
 
@@ -800,7 +800,7 @@ Note: you need to have set both spm and auto_acpc_reorient in your path in MATLA
 
         if regex_motion:
             # Get list of rp files
-            rp_list, conflict_flags = pathmatcher.pathmatcher(r' -i "{inputpath}" -ri "{regex_motion}"  --silent '.format(**template_vars), True)
+            rp_list, conflict_flags = pathmatcher(r' -i "{inputpath}" -ri "{regex_motion}"  --silent '.format(**template_vars), True)
             rp_list = [file[0] for file in rp_list]  # extract only the input match, there's no output anyway
             rp_list = [os.path.join(rootfolderpath, file) for file in rp_list]  # calculate full absolute path instead of relative (since we need to pass them to MATLAB)
             # Get the key and reorganize by key so that we can know if there are multiple sessions per subject
