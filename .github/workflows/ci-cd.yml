@@ -68,7 +68,7 @@ jobs:
           # see https://github.com/actions/download-artifact/blob/main/docs/MIGRATION.md and https://github.com/actions/upload-artifact/issues/478
           pattern: my-artifact-*
           merge-multiple: true
-          path: dist-${{ matrix.runs-on }}
+          path: dist
 
       - name: Upload to TestPyPi
         uses: pypa/gh-action-pypi-publish@v1.9.0
@@ -84,7 +84,7 @@ jobs:
           pip install \
           --index-url https://test.pypi.org/simple/ \
           --extra-index-url https://pypi.org/simple \
-          pyFileFixity
+          pathmatcher
 
   upload_pypi:  # Upload to the real PyPi if everything else worked before, as suggested in: https://py-pkgs.org/08-ci-cd#uploading-to-testpypi-and-pypi
     name: Upload to the real PyPi
@@ -94,9 +94,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           # see https://github.com/actions/download-artifact/blob/main/docs/MIGRATION.md and https://github.com/actions/upload-artifact/issues/478
+          # We download all generated artifacts and merge them all into one folder dist
           pattern: my-artifact-*
           merge-multiple: true
-          path: dist-${{ matrix.runs-on }}
+          path: dist
 
       - uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
