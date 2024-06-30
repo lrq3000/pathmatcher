@@ -55,7 +55,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: my-artifact-${{ matrix.runs-on }}
-        path: dist/*
+        path: dist-${{ matrix.runs-on }}/*
 
   upload_test_pypi:  # Upload to TestPyPi first to ensure that the release is OK (we will try to download it and install it afterwards), as recommended in https://py-pkgs.org/08-ci-cd#uploading-to-testpypi-and-pypi
     name: Upload to TestPyPi
@@ -66,8 +66,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           # see https://github.com/actions/download-artifact/blob/main/docs/MIGRATION.md and https://github.com/actions/upload-artifact/issues/478
-          name: artifact
-          path: dist
+          pattern: my-artifact-*
+          merge-multiple: true
+          path: dist-${{ matrix.runs-on }}
 
       - name: Upload to TestPyPi
         uses: pypa/gh-action-pypi-publish@v1.9.0
@@ -95,7 +96,7 @@ jobs:
           # see https://github.com/actions/download-artifact/blob/main/docs/MIGRATION.md and https://github.com/actions/upload-artifact/issues/478
           pattern: my-artifact-*
           merge-multiple: true
-          path: dist
+          path: dist-${{ matrix.runs-on }}
 
       - uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
