@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # reorientation_registration_helper.py
-# Copyright (C) 2016-2020 Stephen Karl Larroque
+# Copyright (C) 2016-2024 Stephen Karl Larroque
 #
 # Licensed under the MIT License (MIT)
 #
@@ -312,7 +312,7 @@ Note: you need to have set both spm and spm_auto_reorient in your path in MATLAB
         # Delete the special argument to avoid unrecognized argument error in argparse
         if len(argv) > 0 and '--ignore-gooey' in argv[0]: argv.remove('--ignore-gooey') # this argument is automatically fed by Gooey when the user clicks on Start
         # Initialize the normal argparse parser
-        main_parser = argparse.ArgumentParser(add_help=True, description=desc, epilog=ep, formatter_class=argparse.RawTextHelpFormatter)
+        main_parser = argparse.ArgumentParser(add_help=True, description=desc, epilog=ep, formatter_class=argparse.RawTextHelpFormatter, exit_on_error=False)  # exit_on_error avoids the parser quitting the WHOLE Python interpreter on error, ie, if the main arguments are not provided, this should work in the future, see https://github.com/python/cpython/issues/103498#issuecomment-2192397423
         # Define dummy dict to keep compatibile with command-line usage
         widget_dir = {}
         widget_filesave = {}
