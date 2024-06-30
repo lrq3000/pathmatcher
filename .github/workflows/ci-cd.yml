@@ -24,9 +24,9 @@ jobs:
         python-version: ["*"]  # check the list of versions: https://github.com/actions/python-versions/releases and https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md -- note that "*" represents the latest stable version of Python
         os: [ ubuntu-latest, windows-latest, macos-latest ] # jobs that run on Windows and macOS runners that GitHub hosts consume minutes at 2 and 10 times the rate that jobs on Linux runners consume respectively. But it's free for public OSS repositories.
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
@@ -52,7 +52,7 @@ jobs:
         python -m pip install --upgrade build
         python -sBm build
     - name: Save dist/ content for reuse in other GitHub Workflow blocks
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: dist/*
 
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Unpack default artifact into dist/
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           # unpacks default artifact into dist/
           # if `name: artifact` is omitted, the action will create extra parent dir
@@ -70,7 +70,7 @@ jobs:
           path: dist
 
       - name: Upload to TestPyPi
-        uses: pypa/gh-action-pypi-publish@v1.5.0
+        uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
@@ -90,14 +90,14 @@ jobs:
     needs: [testbuild, upload_test_pypi]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           # unpacks default artifact into dist/
           # if `name: artifact` is omitted, the action will create extra parent dir
           name: artifact
           path: dist
 
-      - uses: pypa/gh-action-pypi-publish@v1.5.0
+      - uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
