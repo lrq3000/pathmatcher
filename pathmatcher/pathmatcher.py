@@ -25,7 +25,7 @@
 #
 #=================================
 #        Regular Expression Path Reorganizer
-#                    Python 3.7.0 (previously 2.7.15)
+#                    Python 3.12.0 (previously 2.7.15)
 #                by Stephen Larroque
 #                     License: MIT
 #            Creation date: 2016-03-24
@@ -329,6 +329,19 @@ def get_original_commandline(orig_argv=False):
     else:
         argv = sys.argv
     return "%s %s" % (sys.executable, " ".join(map(shlex.quote, argv)))
+
+def get_original_commandline_shlex(orig_argv=False):
+    """Recreate the original command line string that can be replayed nicely, with one function call (Python 3.8+)"""
+    #
+    # Note that it is impossible to get back the original commandline as-is, as by the time it arrives
+    # to the Python interpreter, the shell has already parsed it and removed some quotes, etc.
+    # So here the trick is that we try to recreate it and add quotes wherever necessary.
+    # Note that since Python 3.10, we can use sys.orig_argv to get more of the original commandline.
+    if orig_argv:
+        argv = sys.orig_argv  # requires Python >= 3.10
+    else:
+        argv = sys.argv
+    return shlex.join(argv[:])
 
 def get_original_commandline_advanced(max_width=80, full_python_path=False, orig_argv=False):
     """
@@ -654,6 +667,7 @@ In addition to the switches provided below, using this program as a Python modul
     reportheaders.write("- Output root: %s\n" % (outputpath.encode('utf-8') if outputpath else ''))
     reportheaders.write("- Output regex: %s\n" % regex_output)
     reportheaders.write("- Full arguments: %s\n" % get_original_commandline())
+    reportheaders.write("- Full arguments (shlex): %s\n" % get_original_commandline_shlex())
     reportheaders.write("- Full arguments (more complete): %s\n" % get_original_commandline_advanced(max_width=None))
     reportheaders.write("\r\n")  # Add a newline (Windows OS style so that it is readable in both Windows and Linux) at the end of the header
 
