@@ -850,10 +850,10 @@ Note: you need to have set both spm and auto_acpc_reorient in your path in MATLA
                         continue
                     if verbose: print("- Processing files: %s" % (os.path.relpath(funclist[0], rootfolderpath)))
                     #mlab.workspace.cd(os.path.dirname(os.path.join(rootfolderpath, funclist[0])))  # Change MATLAB current directory to the functional images dir, to ensure output files will be written in same directory (not sure how SPM handles what folder to use)
-                    # Compute movement parameters (will also create a rp_*.txt file, but NOT modify the nifti files headers
-                    #movement_params = mlab.workspace.realignhelper([os.path.join(rootfolderpath, imf) for imf in funclist])
 
-                    # ALternative for python-matlab-bridge
+                    # Compute movement parameters (will also create a rp_*.txt file, but NOT modify the nifti files headers
+                    #movement_parameters = mlab.workspace.realignhelper([os.path.join(rootfolderpath, imf) for imf in funclist])
+                    # Alternative for python-matlab-bridge
                     #mlab.run_func('cd.m', os.path.dirname(os.path.join(rootfolderpath, funclist[0])))
                     #mlab.run_func('realignhelper.m', [os.path.join(rootfolderpath, imf) for imf in funclist])
                     # Alternative for other libraries based on mlabwrap
@@ -861,7 +861,7 @@ Note: you need to have set both spm and auto_acpc_reorient in your path in MATLA
                     movement_parameters = mlab.realignhelper([os.path.join(rootfolderpath, imf) for imf in funclist])
 
                     # Calculate motion metrics
-                    mov_metrics = calc_motion_metrics(movement_params)
+                    mov_metrics = calc_motion_metrics(movement_parameters)
                     # Build metadata info (subject name, session, what path, etc)
                     func_metadata = [im_key, i, os.path.dirname(os.path.join(rootfolderpath, funclist[0]))]
                     # Append to our list of movement parameters
