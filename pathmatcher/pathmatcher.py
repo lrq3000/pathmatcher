@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # pathmatcher.py
-# Copyright (C) 2016-2024 Larroque Stephen
+# Copyright (C) 2016-2025 Larroque Stephen
 #
 # Licensed under the MIT License (MIT)
 #
@@ -25,7 +25,7 @@
 #
 #=================================
 #        Regular Expression Path Reorganizer
-#                    Python 3.12.0 (previously 2.7.15)
+#                    Python 3.12.7 (previously 2.7.15)
 #                by Stephen Larroque
 #                     License: MIT
 #            Creation date: 2016-03-24
@@ -793,57 +793,50 @@ In addition to the switches provided below, using this program as a Python modul
         outdict[file_op[1]] = outdict.get(file_op[1], 0) + 1
 
     # Build and show simulation report in user's default text editor
-    reportsim = StringIO()
-    if not noreport:
-        reportfile = open(reportpath, 'w')
-    try:
-        reportsim.write("Total number of files matched: %i\n" % len(files_list))
-        reportsim.write("List of matched files:\n")
-        for file_op in files_list:
-            conflict1 = False
-            conflict2 = False
-            if outputpath:
-                # Check if there was a conflict:
-                # Type 1 - already existing output file (force overwrite?)
-                fulloutpath = os.path.join(rootoutpath, file_op[1])
-                if os.path.exists(fulloutpath):
-                    conflict1 = True
-                    conflict1_flag = True
+    reportsim = StringIO()  # simulation report may not get written if noreport, so we use a StringIO to store it and display in the terminal in any case
+    reportsim.write("Total number of files matched: %i\n" % len(files_list))
+    reportsim.write("List of matched files:\n")
+    for file_op in files_list:
+        conflict1 = False
+        conflict2 = False
+        if outputpath:
+            # Check if there was a conflict:
+            # Type 1 - already existing output file (force overwrite?)
+            fulloutpath = os.path.join(rootoutpath, file_op[1])
+            if os.path.exists(fulloutpath):
+                conflict1 = True
+                conflict1_flag = True
 
-                # Type 2 - two files will output with same name (bad regex)
-                if outdict[file_op[1]] > 1:
-                    conflict2 = True
-                    conflict2_flag = True
+            # Type 2 - two files will output with same name (bad regex)
+            if outdict[file_op[1]] > 1:
+                conflict2 = True
+                conflict2_flag = True
 
-            # Show relative or absolute paths?
-            if show_fullpath:
-                showinpath = os.path.join(rootfolderpath, file_op[0])
-                showoutpath = os.path.join(rootoutpath, file_op[1]) if outputpath else None
-            else:
-                showinpath = file_op[0]
-                showoutpath = file_op[1] if outputpath else None
-
-            # Write into report file
-            reportsim.write("* %s%s%s%s%s\n" % (showinpath, " --> " if (outputpath or delete_mode) else "", showoutpath if outputpath else "", " [ALREADY_EXIST]" if conflict1 else '', " [CONFLICT]" if conflict2 else ''))
-        # End of the loop over files, add a blank line
-        reportsim.write("\r\n")
-        if noreport:
-            print(reportsim.getvalue())
+        # Show relative or absolute paths?
+        if show_fullpath:
+            showinpath = os.path.join(rootfolderpath, file_op[0])
+            showoutpath = os.path.join(rootoutpath, file_op[1]) if outputpath else None
         else:
+            showinpath = file_op[0]
+            showoutpath = file_op[1] if outputpath else None
+
+        # Write into report file
+        reportsim.write("* %s%s%s%s%s\n" % (showinpath, " --> " if (outputpath or delete_mode) else "", showoutpath if outputpath else "", " [ALREADY_EXIST]" if conflict1 else '', " [CONFLICT]" if conflict2 else ''))
+    # End of the loop over files, add a blank line
+    reportsim.write("\r\n")
+    if noreport:
+        print(reportsim.getvalue())
+    else:
+        with open(reportpath, 'w', encoding='utf-8', errors='replace') as reportfile:
             reportfile.write("== Pathmatcher simulation report ==\n")
             reportfile.write("This is a simulation report of the path reorganization. No file has been moved/copied/deleted yet.\n")
             reportfile.write(reportheaders.getvalue())
             reportfile.write(reportsim.getvalue())
             # Also write in the log file the results of the simulation report
             if args.log:
-                with open(args.log, 'a') as logfile:
+                with open(args.log, 'a', encoding='utf-8', errors='replace') as logfile:
                     logfile.write('Simulation report:')
                     logfile.write(reportsim.getvalue())
-    finally:
-        try:
-            reportfile.close()
-        except ValueError as exc:
-            pass
     # Open the simulation report with the system's default text editor
     if not (yes_flag or return_report or noreport):  # if --yes is supplied, just skip question and apply!
         ptee.write("Opening simulation report with your default editor, a new window should open.")
