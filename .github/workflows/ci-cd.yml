@@ -92,6 +92,11 @@ jobs:
     name: Upload to the real PyPi
     needs: [testbuild, upload_test_pypi]
     runs-on: ubuntu-latest
+    # Specifying a GitHub environment is optional, but strongly encouraged
+    #environment: pypi
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -103,6 +108,7 @@ jobs:
           path: dist
 
       - uses: pypa/gh-action-pypi-publish@v1.9.0
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
+        # DEPRECATED with Trusted Publishers now being required by PyPi
+        #with:
+        #  user: __token__
+        #  password: ${{ secrets.PYPI_API_TOKEN }}
