@@ -63,6 +63,11 @@ jobs:
     name: Upload to TestPyPi
     needs: [testbuild]
     runs-on: ubuntu-latest
+    # Specifying a GitHub environment is optional, but strongly encouraged
+    #environment: pypi
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
     steps:
       - name: Merge artifacts into a single dist/ folder
         uses: actions/download-artifact@v4
@@ -75,8 +80,9 @@ jobs:
       - name: Upload to TestPyPi
         uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
-          user: __token__
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        # DEPRECATED with Trusted Publishers now being required by PyPi
+        #  user: __token__
+        #  password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository-url: https://test.pypi.org/legacy/
           # To test: repository-url: https://test.pypi.org/legacy/  # and also change token: ${{ secrets.PYPI_API_TOKEN }} to secrets.TEST_PYPI_API_TOKEN # for more infos on registering and using TestPyPi, read: https://py-pkgs.org/08-ci-cd#uploading-to-testpypi-and-pypi -- remove the repository_url to upload to the real PyPi
 
